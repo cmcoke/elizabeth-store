@@ -1,0 +1,75 @@
+{% comment %}
+  Summary:
+  This section defines the layout and content for a custom 404 error page.
+  It includes a heading, a subtext, and a button that links either to a default shop URL or a custom one defined in the section settings.
+{% endcomment %}
+
+<div class="max-w-md">
+  <h1 class="text-5xl font-bold my-4">
+    {% comment %} Outputs the main heading text for the 404 page using the title setting {% endcomment %}
+    {{ section.settings.title }}
+  </h1>
+  <div class="my-4">
+    <p class="text-base md:text-xl leading-normal">
+      {% comment %} Outputs a secondary message under the heading using the subtext_title setting {% endcomment %}
+      {{ section.settings.subtext_title }}
+    </p>
+  </div>
+  <div class="my-4">
+    {% comment %} Checks if the button_url setting is blank {% endcomment %}
+    {% if section.settings.button_url == blank %}
+      {% comment %} If blank, assigns the secure shop URL as the default button link {% endcomment %}
+      {% assign shop_url = shop.secure_url %}
+    {% else %}
+      {% comment %} Otherwise, assigns the user-defined button_url {% endcomment %}
+      {% assign shop_url = section.settings.button_url %}
+    {% endif %}
+    <a
+      href="{{ shop_url }}"
+      class="px-4 inline py-2 text-base font-medium shadow bg-green-600 hover:bg-green-800 text-white"
+    >
+      {% comment %} Displays the text for the button using the button_label setting {% endcomment %}
+      {{ section.settings.button_label }}
+    </a>
+  </div>
+</div>
+
+{% comment %}
+  Summary of schema:
+  This schema defines the configurable settings for the 404 section,
+  including a heading title, subtext, button label, and optional button URL.
+  These settings allow the content to be customized through the Shopify theme editor.
+{% endcomment %}
+{% schema %}
+{
+  "name": "Template 404", // The name of the section as it appears in the Shopify theme editor
+  "tag": "section", // Wraps this component in a <section> tag
+  "class": "flex items-center justify-center text-center py-7 h-screen", // Applies utility classes for layout and styling
+
+  "settings": [
+    {
+      "type": "text", // This input type allows plain text
+      "id": "title", // Unique identifier used to reference this setting in the section
+      "default": "404", // Default value shown in the theme editor and on the page
+      "label": "404 Heading Title" // Display label in the Shopify theme editor
+    },
+    {
+      "type": "text", // Allows entry of subtext message
+      "id": "subtext_title", // Unique identifier for the subtext setting
+      "default": "The page that you're looking for is not found", // Default message to display under the heading
+      "label": "404 Subtext Title" // Label shown in the Shopify theme editor
+    },
+    {
+      "type": "text", // Allows entry of button label text
+      "id": "button_label", // Unique identifier for the button label
+      "default": "Back to homepage", // Default button text
+      "label": "Button Label" // Label shown in the Shopify editor
+    },
+    {
+      "type": "url", // Allows input of a custom URL
+      "id": "button_url", // Unique identifier for the custom URL
+      "label": "Button URL" // Label shown in the Shopify editor
+    }
+  ]
+}
+{% endschema %}
