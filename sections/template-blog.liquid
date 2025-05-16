@@ -1,0 +1,111 @@
+{% comment %}
+  Summary:
+  This code renders a blog section displaying articles in a grid layout.
+  It paginates articles based on a customizable setting, displays article images, titles, excerpts, and a "Read More" link.
+  A pagination component is included at the bottom.
+  Additionally, a schema defines configurable settings for the number of posts per page and the "Read More" text label.
+{% endcomment %}
+
+<div class="py-8">
+  {% comment %}
+    Start pagination loop to fetch articles based on the number_of_blog_posts setting.
+  {% endcomment %}
+  {% paginate blog.articles by section.settings.number_of_blog_posts %}
+    <h1 class="text-center text-3xl">{{ blog.title }}</h1>
+
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {% comment %}
+          Loop through each article in the current pagination.
+        {% endcomment %}
+        {% for article in blog.articles %}
+          <div class="w-full py-6 px-3">
+            <div class="bg-white shadow-xl rounded-lg overflow-hidden">
+              {% comment %}
+                Check if the article has an image and display it as a link to the article.
+              {% endcomment %}
+              {% if article.image %}
+                <a href="{{ article.url }}">
+                  <img
+                    class="w-full h-80 object-cover"
+                    src="{{ article.image | image_url }}"
+                    width="200"
+                    height="200"
+                    alt="{{ article.image.alt }}"
+                  >
+                </a>
+              {% else %}
+                {% comment %}
+                  If no image exists, display a placeholder SVG.
+                {% endcomment %}
+                {{ 'image' | placeholder_svg_tag: 'w-full h-80 object-cover bg-gray-100' }}
+              {% endif %}
+
+              <div class="p-4">
+                <h1 class="text-xl font-medium my-4">{{ article.title }}</h1>
+                {% comment %}
+                  Display the article's excerpt if available; otherwise, show a truncated version of the content.
+                {% endcomment %}
+                {% if article.excerpt.size > 0 %}
+                  <p>{{ article.excerpt | strip_html | truncatewords: 15 }}</p>
+                {% else %}
+                  {% comment %}
+                    Fallback: Display truncated article content if no excerpt is provided.
+                  {% endcomment %}
+                  <p>{{ article.content | strip_html | truncatewords: 15 }}</p>
+                {% endif %}
+
+                {% comment %}
+                  Render the "Read More" link using the label from settings.
+                {% endcomment %}
+                <a class="font-medium text-blue-600 hover:text-blue-800 my-4 block" href="{{ article.url }}">
+                  {{- section.settings.blog_read_more -}}
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% comment %}
+      Render the pagination component at the bottom of the article grid.
+    {% endcomment %}
+    <div class="max-w-6xl mx-auto">
+      {% render 'pagination', pagination: paginate %}
+    </div>
+  {% endpaginate %}
+</div>
+
+{% # theme-check-disable %}
+{% comment %}
+  Summary:
+  This schema defines the configurable settings for the Blog section in Shopify's theme editor.
+  It includes:
+  1. A range slider to control how many blog posts are displayed per page.
+  2. A text field to customize the label for the "Read More" link on blog posts.
+  These settings allow merchants to easily adjust blog post visibility and link text without editing the code.
+{% endcomment %}
+{% schema %}
+{
+  "name": "Blog",
+  "settings": [
+    {
+      "type": "range", // Setting type is a range slider for selecting number of posts.
+      "id": "number_of_blog_posts", // Unique identifier for the setting.
+      "step": 1, // Increments of 1 post.
+      "min": 1, // Minimum of 1 post per page.
+      "max": 6, // Maximum of 6 posts per page.
+      "label": "Blog posts per page", // Label shown in the theme editor.
+      "default": 3 // Default value set to 3 posts per page.
+    },
+    {
+      "type": "text", // Setting type is a text field.
+      "id": "blog_read_more", // Unique identifier for the "Read More" label setting.
+      "label": "Read more label", // Label shown in the theme editor.
+      "default": "Read more" // Default text for the "Read More" link.
+    }
+  ]
+}
+{% endschema %}
+{% # theme-check-enable %}

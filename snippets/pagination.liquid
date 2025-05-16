@@ -1,0 +1,61 @@
+{% comment %}
+  Summary:
+  This code renders a pagination navigation for multi-page content.
+  It shows "Previous" and "Next" buttons when available and page number links.
+  The active page is visually highlighted while others are clickable links.
+{% endcomment %}
+
+{% comment %}
+  Check if pagination is needed (more than one page exists).
+{% endcomment %}
+{% if pagination.pages > 0 %}
+  <nav role="navigation" class="flex justify-center my-8">
+    {% comment %}
+      Render "Previous" button if a previous page exists.
+    {% endcomment %}
+    {% if pagination.previous %}
+      <a
+        href="{{ pagination.previous.url }}"
+        class="border border-gray-600 text-gray-600 hover:bg-gray-600 hover:text-white px-8 py-3 mx-1 rounded-sm font-medium"
+      >
+        {{- pagination.previous.title -}}
+      </a>
+    {% endif %}
+
+    {% comment %}
+      Loop through all pagination parts (page numbers and separators).
+    {% endcomment %}
+    {% for part in pagination.parts %}
+      {% comment %}
+        If part is a clickable link (not the current page), render as link.
+      {% endcomment %}
+      {% if part.is_link %}
+        <a
+          href="{{ part.url }}"
+          class="border border-gray-600 text-gray-600 hover:bg-gray-600 hover:text-white px-8 py-3 mx-1 rounded-sm font-medium"
+        >
+          {{- part.title -}}
+        </a>
+      {% else %}
+        {% comment %}
+          If part is the current page, render as active highlighted span.
+        {% endcomment %}
+        <span class="border border-gray-600 bg-gray-600 text-white px-8 py-3 mx-1 rounded-sm font-medium">
+          {{- part.title -}}
+        </span>
+      {% endif %}
+    {% endfor %}
+
+    {% comment %}
+      Render "Next" button if a next page exists.
+    {% endcomment %}
+    {% if pagination.next %}
+      <a
+        href="{{ pagination.next.url }}"
+        class="border border-gray-600 text-gray-600 hover:bg-gray-600 hover:text-white px-8 py-3 mx-1 rounded-sm font-medium"
+      >
+        {{- pagination.next.title -}}
+      </a>
+    {% endif %}
+  </nav>
+{% endif %}

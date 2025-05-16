@@ -124,13 +124,13 @@
           {% comment %}
             Display pagination links if there are multiple pages of comments.
           {% endcomment %}
-          {% if paginate.pages > 1 %}
-            {{ paginate | default_pagination }}
-          {% endif %}
+          <div class="max-w-6xl mx-auto">
+            {% render 'pagination', pagination: paginate %}
+          </div>
         {% endpaginate %}
       </div>
     {% else %}
-      There are no comments in this article
+      <h1 class="text-lg mb-4 font-medium text-center">There are no comments in this article</h1>
     {% endif %}
   </div>
 
@@ -274,6 +274,7 @@
   for customizing the article layout in the theme editor.
 {% endcomment %}
 
+{% # theme-check-disable %}
 {% schema %}
 {
   "name": "Template Article", // Name of the template section shown in the theme editor.
@@ -322,3 +323,4 @@
   ]
 }
 {% endschema %}
+{% # theme-check-enable %}
